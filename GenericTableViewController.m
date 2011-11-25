@@ -6,6 +6,12 @@
 
 #import "GenericTableViewController.h"
 
+@interface GenericTableViewController (PrivateMethods)
+
+-(NSDictionary *)dictionaryForSection:(NSInteger)section;
+
+@end
+
 @implementation GenericTableViewController
 
 @synthesize data;
@@ -93,6 +99,16 @@ const NSString *kValueKey = @"value";
     }
 }
 
+-(NSDictionary *)dictionaryForSection:(NSInteger)section {
+    if ([data count] > section) {
+        return [data objectAtIndex:section];
+    } else {
+        NSLog(@"Invalid section requested: %d", section);
+        return nil;
+    }
+}
+
+
 #pragma mark -
 #pragma mark UITableViewDataSource
 
@@ -101,7 +117,7 @@ const NSString *kValueKey = @"value";
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [[[data objectAtIndex:section] objectForKey:kRowsKey] count];
+    return [[[self dictionaryForSection:section] objectForKey:kRowsKey] count];
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -185,19 +201,19 @@ const NSString *kValueKey = @"value";
 }
 
 -(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return [[data objectAtIndex:section] objectForKey:kHeaderKey];    
+    return [[self dictionaryForSection:section] objectForKey:kHeaderKey];    
 }
 
 -(NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
-    return [[data objectAtIndex:section] objectForKey:kFooterKey];    
+    return [[self dictionaryForSection:section] objectForKey:kFooterKey];    
 }
 
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    return [[data objectAtIndex:section] objectForKey:kHeaderViewKey];    
+    return [[self dictionaryForSection:section] objectForKey:kHeaderViewKey];    
 }
 
 -(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
-    return [[data objectAtIndex:section] objectForKey:kFooterViewKey];    
+    return [[self dictionaryForSection:section] objectForKey:kFooterViewKey];    
 }
 
 #pragma mark -
@@ -290,29 +306,19 @@ const NSString *kValueKey = @"value";
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    if ([data count] > section) {
-        UIView *header = [[data objectAtIndex:section] objectForKey:kHeaderViewKey];    
-        if (header) {
-            return HEIGHT(header);
-        }
-        return [[[data objectAtIndex:section] objectForKey:kHeaderHeightKey] floatValue];
-    } else {
-        NSLog(@"Invalid section requested in heightForHeaderInSection: %d", section);
-        return 0;
+    UIView *header = [[self dictionaryForSection:section] objectForKey:kHeaderViewKey];    
+    if (header) {
+        return header.frame.size.height;
     }
+    return [[[self dictionaryForSection:section] objectForKey:kHeaderHeightKey] floatValue];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-    if ([data count] > section) {
-        UIView *footer = [[data objectAtIndex:section] objectForKey:kFooterViewKey];    
-        if (footer) {
-            return HEIGHT(footer);
-        }
-        return [[[data objectAtIndex:section] objectForKey:kFooterHeightKey] floatValue];
-    } else {
-        NSLog(@"Invalid section requested in heightForFooterInSection: %d", section);
-        return 0;
+    UIView *footer = [[self dictionaryForSection:section] objectForKey:kFooterViewKey];    
+    if (footer) {
+        return footer.frame.size.height;
     }
+    return [[[self dictionaryForSection:section] objectForKey:kFooterHeightKey] floatValue];
 }
 
 @end
