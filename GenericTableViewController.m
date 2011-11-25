@@ -290,19 +290,29 @@ const NSString *kValueKey = @"value";
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    UIView *header = [[data objectAtIndex:section] objectForKey:kHeaderViewKey];    
-    if (header) {
-        return HEIGHT(header);
+    if ([data count] > section) {
+        UIView *header = [[data objectAtIndex:section] objectForKey:kHeaderViewKey];    
+        if (header) {
+            return HEIGHT(header);
+        }
+        return [[[data objectAtIndex:section] objectForKey:kHeaderHeightKey] floatValue];
+    } else {
+        NSLog(@"Invalid section requested in heightForHeaderInSection: %d", section);
+        return 0;
     }
-    return [[[data objectAtIndex:section] objectForKey:kHeaderHeightKey] floatValue];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-    UIView *footer = [[data objectAtIndex:section] objectForKey:kFooterViewKey];    
-    if (footer) {
-        return HEIGHT(footer);
+    if ([data count] > section) {
+        UIView *footer = [[data objectAtIndex:section] objectForKey:kFooterViewKey];    
+        if (footer) {
+            return HEIGHT(footer);
+        }
+        return [[[data objectAtIndex:section] objectForKey:kFooterHeightKey] floatValue];
+    } else {
+        NSLog(@"Invalid section requested in heightForFooterInSection: %d", section);
+        return 0;
     }
-    return [[[data objectAtIndex:section] objectForKey:kFooterHeightKey] floatValue];
 }
 
 @end
