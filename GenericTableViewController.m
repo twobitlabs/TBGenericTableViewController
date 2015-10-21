@@ -103,7 +103,7 @@ const NSString *kValueKey = @"value";
     if ([data count] > section) {
         return [data objectAtIndex:section];
     } else {
-        NSLog(@"Invalid section requested: %d", section);
+        NSLog(@"Invalid section requested: %ld", (long)section);
         return nil;
     }
 }
@@ -132,6 +132,14 @@ const NSString *kValueKey = @"value";
     }
     
     [[cell textLabel] setText:[row objectForKey:kLabelKey]];
+    [[cell textLabel] setBackgroundColor:[row objectForKey:kRowBackgroundColorKey]];
+    if ([[row objectForKey:@"selected"] isEqual:@YES]) {
+        [[cell textLabel] setFont:[UIFont boldSystemFontOfSize:[[[cell textLabel] font] pointSize]]];
+        [[cell textLabel] setTextColor:[row objectForKey:kRowTextColorSelectedKey]];
+    } else {
+        [[cell textLabel] setFont:[UIFont systemFontOfSize:[[[cell textLabel] font] pointSize]]];
+        [[cell textLabel] setTextColor:[row objectForKey:kRowTextColorDeselectedKey]];
+    }
 
     if ([row objectForKey:kIndentationLevelKey]) {
         [cell setIndentationLevel:[[row objectForKey:kIndentationLevelKey] intValue]];
@@ -150,10 +158,8 @@ const NSString *kValueKey = @"value";
     } 
     
     // background color
-    if ([row objectForKey:kRowBackgroundColorKey]) {
-        [cell setBackgroundColor:[row objectForKey:kRowBackgroundColorKey]];
-    } 
-    
+    [cell setBackgroundColor:[UIColor clearColor]];
+
     UISwitch *toggle;
     switch (rowType) {
         case GenericTableCellStyleLink:
@@ -227,7 +233,7 @@ const NSString *kValueKey = @"value";
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSArray *rowsInSection = [[data objectAtIndex:indexPath.section] objectForKey:kRowsKey];
-    NSDictionary *row = [rowsInSection objectAtIndex:indexPath.row];
+    NSMutableDictionary *row = [rowsInSection objectAtIndex:indexPath.row];
     GenericTableCellStyle rowType = [[row objectForKey:kRowTypeKey] intValue];
 
     id controller;
@@ -265,9 +271,11 @@ const NSString *kValueKey = @"value";
                         [[cell textLabel] setTextColor:[row objectForKey:kRowTextColorDeselectedKey]];
                     }                     
                     // background color
-                    if ([row objectForKey:kRowBackgroundColorKey]) {
-                        [cell setBackgroundColor:[row objectForKey:kRowBackgroundColorDeselectedKey]];
-                    } 
+//                    if ([row objectForKey:kRowBackgroundColorKey]) {
+//                        [cell setBackgroundColor:[row objectForKey:kRowBackgroundColorDeselectedKey]];
+//                    }
+                    [[cell textLabel] setFont:[UIFont systemFontOfSize:[[[cell textLabel] font] pointSize]]];
+                    [[cell textLabel] setTextColor:[row objectForKey:kRowTextColorDeselectedKey]];
                 } else {
                     // background image
                     if ([row objectForKey:kRowBackgroundSelectedKey]) {
@@ -282,9 +290,11 @@ const NSString *kValueKey = @"value";
                         [[cell textLabel] setTextColor:[row objectForKey:kRowTextColorSelectedKey]];
                     }                                         
                     // background color
-                    if ([row objectForKey:kRowBackgroundColorKey]) {
-                        [cell setBackgroundColor:[row objectForKey:kRowBackgroundColorSelectedKey]];
-                    } 
+//                    if ([row objectForKey:kRowBackgroundColorKey]) {
+//                        [cell setBackgroundColor:[row objectForKey:kRowBackgroundColorSelectedKey]];
+//                    } 
+                    [[cell textLabel] setFont:[UIFont boldSystemFontOfSize:[[[cell textLabel] font] pointSize]]];
+                    [[cell textLabel] setTextColor:[row objectForKey:kRowTextColorSelectedKey]];
                 }
             }
             
